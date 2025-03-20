@@ -45,7 +45,7 @@ const seedAccounts = async () => {
   }
 };
 
-seedAccounts();
+await seedAccounts();
 
 // Get all accounts
 app.get("/accounts", async (req, res) => {
