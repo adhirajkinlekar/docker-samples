@@ -1,7 +1,3 @@
-Here's a detailed README for your GitHub repository:  
-
----
-
 # Docker Samples Repository  
 
 Welcome to the **Docker Samples Repository**! 🚀  
