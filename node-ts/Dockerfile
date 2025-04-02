@@ -1,0 +1,36 @@
+# ========================
+# BASE STAGE
+# ========================
+
+FROM node:20-alpine AS base
+WORKDIR /app
+COPY package.json package-lock.json ./
+RUN npm ci --only=production
+
+# ========================
+# DEVELOPMENT STAGE
+# ========================
+FROM node:20-alpine AS development
+WORKDIR /app
+COPY --from=base /app/node_modules ./node_modules
+COPY . .
+RUN npm install --only=development
+CMD ["npm", "run", "dev"]
+
+# ========================
+# BUILD STAGE
+# ========================
+FROM node:20-alpine AS build
+WORKDIR /app
+COPY --from=development /app ./
+RUN npm run build
+
+# ========================
+# PRODUCTION STAGE
+# ========================
+FROM node:20-alpine AS production
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=base /app/node_modules ./node_modules
+COPY --from=build /app/dist ./dist
+CMD ["node", "dist/index.js"]

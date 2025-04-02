@@ -1,0 +1,15 @@
+services:
+  app:
+    container_name: node-ts-app
+    build:
+      context: .
+      target: "${NODE_ENV}"
+    ports:
+      - "${PORT}:3000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules 
+    command: ["npm", "run", "dev"]
+ 

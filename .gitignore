@@ -1,2 +1,3 @@
 /mongo-db/node_modules
 /minio/node_modules
+/node-ts/node_modules
