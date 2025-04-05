@@ -4,8 +4,6 @@ const app = express();
 
 const PORT = process.env.PORT;
 
-console.log({ PORT })
-
 app.get("/", (_req: Request, res: Response) => {
   res.send("Hello, TypeScript with Docker!");
 });
