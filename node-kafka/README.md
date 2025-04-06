@@ -1,7 +1,3 @@
-Here’s a clean and concise `README.md` you can use for your project 👇
-
----
-
 ## 🐳 Dockerized Node.js Microservices with Kafka + Zookeeper
 
 This is a **sample project** demonstrating how to build **event-driven Node.js microservices** using:
