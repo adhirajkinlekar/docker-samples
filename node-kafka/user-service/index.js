@@ -16,10 +16,8 @@ const run = async () => {
 
   app.post('/register', async (req, res) => {
     const user = req.body;
-    await producer.send({
-      topic: 'user-registered',
-      messages: [{ value: JSON.stringify(user) }],
-    });
+
+    if(!user.email || !user.name) return res.status(422).send("User name of email are invalid");
 
     await producer.send({
         topic: 'user-events',
@@ -27,12 +25,11 @@ const run = async () => {
           {
             value: JSON.stringify({
               eventType: 'user-registered',
-              data: { email: 'test@example.com', name: 'Test User' },
+              data: user,
             }),
           },
         ],
       });
-      
 
     res.send('User registered and event published');
   });

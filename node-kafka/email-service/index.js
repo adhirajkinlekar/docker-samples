@@ -18,7 +18,7 @@ const run = async () => {
 
       const parsed = JSON.parse(message.value.toString());
       
-      const { eventType, data } = parsed;
+      const { eventType, data } = parsed; 
 
       switch (eventType) {
         case 'user-registered':
