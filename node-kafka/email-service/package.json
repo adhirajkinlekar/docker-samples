@@ -1,0 +1,13 @@
+{
+    "name": "email-service",
+    "version": "1.0.0",
+    "description": "Listens to user events and sends emails",
+    "main": "index.js",
+    "scripts": {
+      "start": "node index.js"
+    },
+    "dependencies": {
+      "kafkajs": "^2.2.4"
+    }
+  }
+  
