@@ -68,15 +68,14 @@ We use **NGINX Ingress**, deployed via Helm.
 
 ## ⚙️ Installing Chocolatey & Helm (on Windows)
 
-### Step 1: Install Chocolatey
+### Step 1: Install Chocolatey 
 
-Open PowerShell as Administrator and run:
+Chocolatey is a package manager for Windows that helps install tools like Helm with ease.
 
-```powershell
-Set-ExecutionPolicy Bypass -Scope Process -Force; `
-[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; `
-iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
-```
+👉 Visit the official installation page and follow the instructions:
+🔗 https://chocolatey.org/install
+
+💡 Make sure to run the installation in PowerShell as Administrator.
 
 ### Step 2: Install Helm
 
