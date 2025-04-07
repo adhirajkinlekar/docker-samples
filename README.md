@@ -40,7 +40,7 @@ This repository will include:
 
 ```
 /docker-samples-repo
-│── /mongo-db/
+│── /mongo/
 │   ├── docker-compose.yml
 │   ├── README.md
 │── /minio/
