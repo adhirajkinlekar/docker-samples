@@ -1,0 +1,114 @@
+services:
+  traefik:
+    image: traefik:v2.10
+    ports:
+      - "80:80"
+      # - "443:443" # for HTTPS
+      - "8080:8080" # Traefik Dashboard
+    command:
+      - "--api.dashboard=true"
+      - "--api.insecure=false"
+      - "--providers.docker=true"
+      - "--entrypoints.web.address=:80"
+      # - "--entrypoints.websecure.address=:443" # for HTTPS
+      # - "--certificatesresolvers.le.acme.httpchallenge=true"
+      # - "--certificatesresolvers.le.acme.httpchallenge.entrypoint=web"
+      # - "--certificatesresolvers.le.acme.email=your@email.com"
+      # - "--certificatesresolvers.le.acme.storage=/letsencrypt/acme.json"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      # - "./letsencrypt:/letsencrypt" # for HTTPS storage
+    networks:
+      - backend
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+
+  home-service:
+    image: docker.io/adhirajk/home-service:1.0.0
+    networks:
+      - backend
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.home.rule=Host(`myswarmapp.com`)"
+      - "traefik.http.routers.home.entrypoints=web"
+      # - "traefik.http.routers.home.entrypoints=websecure" # for HTTPS
+      # - "traefik.http.routers.home.tls.certresolver=le"
+      - "traefik.http.services.home.loadbalancer.server.port=3000"
+    
+
+  admin-service:
+    image: docker.io/adhirajk/admin-service:1.0.0
+    networks:
+      - backend
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.admin.rule=Host(`admin.myswarmapp.com`)"
+      - "traefik.http.routers.admin.entrypoints=web"
+      # - "traefik.http.routers.admin.entrypoints=websecure" # for HTTPS
+      # - "traefik.http.routers.admin.tls.certresolver=le"
+      - "traefik.http.services.admin.loadbalancer.server.port=3000"
+  
+  auth-service:
+    image: docker.io/adhirajk/auth-service:1.0.0
+    networks:
+      - backend
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    # secrets:
+    #   - db_password
+    # environment:
+    #   - DB_PASSWORD_FILE=/run/secrets/db_password
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.auth.rule=Host(`auth.myswarmapp.com`)"
+      - "traefik.http.routers.auth.entrypoints=web"
+      # - "traefik.http.routers.auth.entrypoints=websecure" # for HTTPS
+      # - "traefik.http.routers.auth.tls.certresolver=le"
+      - "traefik.http.services.auth.loadbalancer.server.port=3000"
+
+secrets:
+  db_password:
+    external: true  # You should create this with `docker secret create`
+
+networks:
+  backend:
+    driver: overlay

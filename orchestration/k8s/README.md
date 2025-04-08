@@ -51,7 +51,7 @@ kubectl apply -f ./infra
 
 ## 🌐 Ingress & Routing
 
-To expose services using custom domain routes (like `home.myapp.com`, `admin.myapp.com`), we use a Kubernetes `Ingress` resource with the **NGINX Ingress Controller**.
+To expose services using custom domain routes (like `home.myk8sapp.com`, `admin.myk8sapp.com`), we use a Kubernetes `Ingress` resource with the **NGINX Ingress Controller**.
 
 ---
 
@@ -106,18 +106,18 @@ kubectl get svc -n ingress-nginx
 
 ## 🌍 Local Domain Setup
 
-To simulate custom domains locally (like `admin.myapp.com` or `auth.myapp.com`), you need to map them to `127.0.0.1` in your system's hosts file.
+To simulate custom domains locally (like `admin.myk8sapp.com` or `auth.myk8sapp.com`), you need to map them to `127.0.0.1` in your system's hosts file.
 
 Add these entries to your local `/etc/hosts` or `C:\Windows\System32\drivers\etc\hosts`:
 
 ```
-127.0.0.1 myapp.com auth.myapp.com admin.myapp.com 
+127.0.0.1 myk8sapp.com auth.myk8sapp.com admin.myk8sapp.com 
 ```
 
 Access services via:
-- `http://myapp.com`
-- `http://auth.myapp.com`
-- `http://admin.myapp.com`
+- `http://myk8sapp.com`
+- `http://auth.myk8sapp.com`
+- `http://admin.myk8sapp.com`
 
 ---
 
