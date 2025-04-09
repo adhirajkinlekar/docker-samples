@@ -12,6 +12,7 @@ const kafka = new Kafka({
 const producer = kafka.producer();
 
 const run = async () => {
+
     await producer.connect();
 
     app.post('/register', async (req, res) => {

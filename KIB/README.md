@@ -1,127 +1,112 @@
-Sure! Here's a clean and developer-friendly `README.md` for your repo:
+## 📈 K6 Load Testing with Grafana + InfluxDB 
+
+This repo shows how to run [K6](https://k6.io/) performance tests on a Node.js API, and visualize the results in [Grafana](https://grafana.com/) using [InfluxDB](https://www.influxdata.com/).  
+This setup is great for **local development**, with manual control over dashboards and data sources in Grafana.
 
 ---
 
-```markdown
-# 🔥 K6 + InfluxDB + Grafana + Node.js API - Load Testing Stack
+### 🐳 Stack Overview
 
-This project sets up a complete local performance testing stack using **K6**, **InfluxDB**, and **Grafana**, targeting a sample **Node.js API**.
-
-> Easily simulate load tests and monitor real-time metrics on a Grafana dashboard.
-
----
-
-## 📦 Stack Components
-
-| Component   | Role                          |
-|------------|-------------------------------|
-| **K6**      | Load testing / traffic simulation |
-| **Node.js API** | Sample API to test              |
-| **InfluxDB**| Time-series metrics storage    |
-| **Grafana** | Visualization dashboard        |
+| Service   | Purpose                             |
+|-----------|-------------------------------------|
+| `api`     | Simple Node.js/Express server       |
+| `k6`      | Load testing tool (run manually)    |
+| `influxdb`| Metrics database for K6 output      |
+| `grafana` | Dashboard UI for visualizing metrics|
 
 ---
 
 ## 📁 Project Structure
 
 ```
-project-root/
-├── docker-compose.yml        # Defines the full stack
-├── k6/
-│   └── test.js               # K6 load test script
-├── api/
-│   ├── index.js              # Simple Node.js API
-│   ├── package.json
-│   └── Dockerfile
+.
+├── api/                  # Node.js Express API
+│   └── index.js
+├── k6/                   # K6 test scripts
+│   ├── smoke.js
+│   ├── load.js
+│   └── stress.js
+├── docker-compose.yml   # All services
+└── README.md            # This file
 ```
 
 ---
 
 ## 🚀 Getting Started
 
-### 1. Clone the repo
+### 1. Clone the repo and start services
 
 ```bash
-git clone https://github.com/your-username/load-test-stack.git
-cd load-test-stack
+docker-compose up -d --build
 ```
 
-### 2. Start all services
-
-```bash
-docker-compose up --build
-```
-
-This will:
-- Start the sample API on `http://localhost:3000`
-- Run a K6 load test
-- Send metrics to InfluxDB
-- Visualize metrics in Grafana on `http://localhost:3001`
+This will start:
+- `api` on `http://localhost:3000`
+- `influxdb` on `http://localhost:8086`
+- `grafana` on `http://localhost:3001` (login: `admin` / `admin`)
 
 ---
 
-## 🧪 Test Script (`k6/test.js`)
+### 2. Manually configure Grafana
 
-```js
-import http from 'k6/http';
-import { check, sleep } from 'k6';
+#### ✅ Add InfluxDB as a data source
 
-export let options = {
-  vus: 10,
-  duration: '30s',
-};
+1. Go to [http://localhost:3001](http://localhost:3001)
+2. Sidebar → ⚙️ **Settings** > **Data Sources** > **Add data source**
+3. Choose **InfluxDB**
+4. Fill in:
+   - **URL**: `http://influxdb:8086`
+   - **Database**: `k6`
+   - **HTTP Method**: GET (default is fine)
+5. Click **Save & Test** ✅
 
-export default function () {
-  let res = http.get('http://api:3000/');
-  check(res, { 'status is 200': (r) => r.status === 200 });
-  sleep(1);
-}
-```
+#### 📊 Import the K6 Dashboard
+
+1. In Grafana sidebar → **+ > Import**
+2. Enter **Dashboard ID**: `2587` <!-- Downloads the JSON from grafana.com and imports it -->
+3. Select the **InfluxDB** data source you just created
+4. Click **Import**
+
+<!-- 2587 is the official K6 Load Testing Results dashboard -->
+
+You now have a prebuilt K6 dashboard ready to go!
+---
+
+## 📌 Running K6 Tests
+
+### Example: Run the test
+           
+<!-- Use InfluxDB container's network namespace -->
+<!-- Mount current directory for access to K6 test scripts -->
+<!-- Run the K6 stress test script -->
+<!-- Send results to InfluxDB -->
+
+docker run --rm -i `
+  --network container:$(docker-compose ps -q influxdb | % { $_.Trim() }) `
+  -v "${PWD}:/scripts" `
+  grafana/k6 run /scripts/k6/stress.js `
+  --out influxdb=http://influxdb:8086/k6
+
+
+> 💡 Change `/scripts/k6/smoke.js` to `/scripts/k6/load.js` or `stress.js` as needed.
+
+### 🔍 Why a separate K6 container?
+
+Because you're using Docker Compose to run your app and monitoring stack, and K6 itself is just a CLI tool, the cleanest way to run K6 without installing it on your host is to use the official Docker image (grafana/k6) temporarily as a tool container — not a service.
+
+It's a common pattern called the "tooling container pattern.
 
 ---
 
-## 📊 Grafana Dashboard
+## 🔬 Available Test Scripts
 
-- URL: [http://localhost:3001](http://localhost:3001)
-- Login: `admin / admin`
-- Add **InfluxDB** as a data source:
-  - URL: `http://influxdb:8086`
-  - Database: `k6`
+| Script     | Description                     |
+|------------|---------------------------------|
+| `smoke.js` | Basic test to check API is up   |
+| `load.js`  | Simulates steady moderate load  |
+| `stress.js`| Simulates high, increasing load |
 
-You can also import a sample K6 dashboard from [Grafana Dashboards](https://grafana.com/grafana/dashboards/2587-k6-load-testing-results/).
+Each script uses K6's `options` block to control duration, VUs, thresholds, etc.
 
----
 
-## 🛑 Stopping the Stack
-
-```bash
-docker-compose down
-```
-
----
-
-## 📝 Customize
-
-- Modify `k6/test.js` to test different endpoints or change load options.
-- Extend the sample API or point to your actual app.
-- Add alerts or dashboards in Grafana.
-
----
-
-## 🧠 Why This Stack?
-
-- **K6** is great for writing load tests in JS.
-- **InfluxDB** handles large volumes of time-based metrics.
-- **Grafana** gives you real-time performance visualizations.
-- Entire setup is Dockerized for local testing & CI integration.
-
----
-
-## 📄 License
-
-MIT – use freely and stress responsibly 😄
-```
-
----
-
-Let me know if you want this as a downloadable template repo or want me to push this to a GitHub Gist.
+ 

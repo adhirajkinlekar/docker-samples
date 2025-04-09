@@ -11,7 +11,4 @@ COPY . .
 EXPOSE 3000
 
 CMD ["npm", "start"]
-
-# docker build -t adhirajk/home-service:1.0.0 .
-
-# docker push adhirajk/home-service:1.0.0
+ 
