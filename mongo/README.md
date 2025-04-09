@@ -38,7 +38,7 @@ This setup ensures that transactions are supported by:
    docker-compose up -d
    ```  
 
-2. **Verify the replica set is active**  
+2. **Verify the replica set is active (optional)**  
    ```bash
    docker exec -it mongo_rs mongosh --eval "rs.status()"
    ```  

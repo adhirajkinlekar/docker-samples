@@ -7,12 +7,13 @@ This repository contains a collection of Docker configurations for various appli
 ## 📌 What's Inside?  
 
 This repository will include:  
-- **Database Containers** (e.g., relational and NoSQL databases)  
+- **Database Containers**    
 - **Storage Solutions**  
 - **Development and Testing Environments**  
 - **Microservices and APIs**  
 - **Monitoring and Logging Tools**  
 - **Message Brokers**  
+- **Orchestration Solutions**
 - **Other Essential DevOps Tools**  
 
 ## 📖 How to Use?  
